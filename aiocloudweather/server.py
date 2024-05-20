@@ -32,7 +32,6 @@ class CloudWeatherListener:
         self.new_dataset_cb: list[Callable[[CloudRawSensor], None]] = []
 
         # storage
-        #self.sensors: dict[str, EcoWittSensor] = {}
         self.stations: list[str] = []
 
     async def _new_dataset_cb(self, dataset: CloudRawSensor) -> None:
@@ -68,10 +67,8 @@ class CloudWeatherListener:
     async def handler(self, request: web.BaseRequest) -> web.Response:
         """AIOHTTP handler for the API."""
 
-        if request.method != "GET":
-            return web.Response(status=405)
-        if request.path is None :
-            return web.Response(status=404)
+        if request.method != "GET" or request.path is None:
+            raise web.HTTPBadRequest()
 
         station_id: str = None
         dataset: WundergroundRawSensor | WeathercloudRawSensor = None

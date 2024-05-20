@@ -1,6 +1,9 @@
 """"""
 
 from dataclasses import dataclass, field
+from typing import Final
+
+from aiocloudweather.conversion import (celsius_to_fahrenheit, fahrenheit_to_celsius, hpa_to_inhg, in_to_mm, inhg_to_hpa, lux_to_wm2, mm_to_in, mph_to_ms, ms_to_mph, wm2_to_lux)
 from .const import (
     DEGREE,
     LIGHT_LUX,
@@ -135,3 +138,75 @@ class WeathercloudRawSensor(CloudRawSensor):
         default=None,
         metadata={"units": UnitOfIrradiance.WATTS_PER_SQUARE_METER, "arg": "solarrad"},
     )
+
+
+imperial_to_metric: Final = {
+    UnitOfPressure.INHG: inhg_to_hpa,
+    UnitOfTemperature.FAHRENHEIT: fahrenheit_to_celsius,
+    UnitOfPrecipitationDepth.INCHES: in_to_mm,
+    LIGHT_LUX: lux_to_wm2,
+    UnitOfSpeed.MILES_PER_HOUR: mph_to_ms,
+}
+
+metric_to_imperial: Final = {
+    UnitOfPressure.HPA: hpa_to_inhg,
+    UnitOfTemperature.CELSIUS: celsius_to_fahrenheit,
+    UnitOfPrecipitationDepth.MILLIMETERS: mm_to_in,
+    UnitOfIrradiance.WATTS_PER_SQUARE_METER: wm2_to_lux,
+    UnitOfSpeed.METERS_PER_SECOND: ms_to_mph,
+}
+
+@dataclass
+class WeatherStationSensor:
+    """
+    Weather data.
+    """
+    station_id: str
+    station_key: str
+    date_utc: str
+
+    barometer: tuple[float,float]
+    temperature: tuple[float, float]
+    humidity: tuple[float, float]
+    indoor_temperature: tuple[float, float]
+    indoor_humidity: tuple[float, float]
+    dewpoint: tuple[float, float]
+    rain: tuple[float, float]
+    daily_rain: tuple[float, float]
+    wind_direction: tuple[float, float]
+    wind_speed: tuple[float, float]
+    wind_gust_speed: tuple[float, float]
+    wind_gust_direction: tuple[float, float]
+    uv: tuple[int, int]
+    solar_radiation: tuple[float, float]
+
+    @staticmethod
+    def from_wunderground(data: WundergroundRawSensor) -> 'WeatherStationSensor':
+        converted_data = {}
+        for field, value in data.__dict__.items():
+            if field.startswith('_') or field == 'station_id' or field == 'station_key':
+                continue
+            units = data.__dataclass_fields__[field].metadata.get('units')
+            conversion_func = imperial_to_metric.get(units)
+            if conversion_func:
+                converted_value = conversion_func(value)
+                converted_data[field] = converted_value
+            else:
+                converted_data[field] = value
+        return WeatherStationSensor(**converted_data)
+    
+    @staticmethod
+    def from_weathercloud(data: WeathercloudRawSensor) -> 'WeatherStationSensor':
+        converted_data = {}
+        for field, value in data.__dict__.items():
+            if field.startswith('_') or field == 'station_id' or field == 'station_key':
+                continue
+            units = data.__dataclass_fields__[field].metadata.get('units')
+            conversion_func = metric_to_imperial.get(units)
+            if conversion_func:
+                val = value/10
+                converted_value = conversion_func(value)
+                converted_data[field] = converted_value
+            else:
+                converted_data[field] = value
+        return WeatherStationSensor(**converted_data)
