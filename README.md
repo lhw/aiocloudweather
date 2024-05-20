@@ -1,5 +1,5 @@
-# aioEcoWitt
+# aiocloudweather
 
-Simple python library for the EcoWitt Protocol
+Simple python library for parsing Wundergrund and Weathercloud update requests
 
-Inspired by pyecowit & ecowitt2mqtt
+Based on aioecowitt

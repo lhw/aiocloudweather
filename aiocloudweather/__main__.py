@@ -5,21 +5,20 @@ from __future__ import annotations
 import asyncio
 import sys
 
-from aioecowitt import EcoWittListener, EcoWittSensor
-
+from aiocloudweather import CloudWeatherListener, CloudRawSensor
 
 def usage():
     """Print usage of the CLI."""
     print(f"Usage: {sys.argv[0]} port")
 
 
-async def my_handler(sensor: EcoWittSensor) -> None:
+async def my_handler(sensor: CloudRawSensor) -> None:
     """Callback handler for printing data."""
     print("In my handler")
     print(f"{str(sensor)}")
 
 
-async def run_server(ecowitt_ws: EcoWittListener) -> None:
+async def run_server(ecowitt_ws: CloudWeatherListener) -> None:
     """Run server in endless mode."""
     await ecowitt_ws.start()
     while True:
@@ -33,11 +32,11 @@ def main() -> None:
         sys.exit(1)
 
     print(f"Firing up webserver to listen on port {sys.argv[1]}")
-    ecowitt_server = EcoWittListener(port=sys.argv[1])
+    cloudweather_server = CloudWeatherListener(port=sys.argv[1])
 
-    ecowitt_server.new_sensor_cb.append(my_handler)
+    cloudweather_server.new_dataset_cb.append(my_handler)
     try:
-        asyncio.run(run_server(ecowitt_server))
+        asyncio.run(run_server(cloudweather_server))
     except Exception as err:  # pylint: disable=broad-except
         print(str(err))
     print("Exiting")
