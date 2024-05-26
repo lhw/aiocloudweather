@@ -8,7 +8,7 @@ from copy import deepcopy
 
 from aiohttp import web
 
-from aiocloudweather.sensor import WundergroundRawSensor, WeathercloudRawSensor, CloudRawSensor
+from aiocloudweather.sensor import WundergroundRawSensor, WeathercloudRawSensor, WeatherStation
 
 _LOGGER = logging.getLogger(__name__)
 _CLOUDWEATHER_LISTEN_PORT = 49199
@@ -29,12 +29,12 @@ class CloudWeatherListener:
 
         # internal data
         self.last_values: dict[str, dict[str, str | None]] = {}
-        self.new_dataset_cb: list[Callable[[CloudRawSensor], None]] = []
+        self.new_dataset_cb: list[Callable[[WeatherStation], None]] = []
 
         # storage
         self.stations: list[str] = []
 
-    async def _new_dataset_cb(self, dataset: CloudRawSensor) -> None:
+    async def _new_dataset_cb(self, dataset: WeatherStation) -> None:
         """Internal new sensor callback
 
         binds to self.new_sensor_cb
@@ -42,16 +42,16 @@ class CloudWeatherListener:
         for callback in self.new_dataset_cb:
             await callback(dataset)
 
-    async def process_wunderground(self, data: dict[str, str | float]):
+    async def process_wunderground(self, data: dict[str, str | float]) -> WeatherStation:
         """Process Wunderground data."""
 
-        fields = {f.metadata["arg"]: f.name for f in WundergroundRawSensor.__dataclass_fields__.values() if "arg" in f.metadata}
+        fields = {f.metadata["arg"]: [f.name, f.type] for f in WundergroundRawSensor.__dataclass_fields__.values() if "arg" in f.metadata}
         instance_data = {}
-        for arg, field_name in fields.items():
+        for arg, field in fields.items():
             if arg in data:
-                instance_data[field_name] = data[arg]
+                instance_data[field[0]] = field[1](data[arg])
 
-        return WundergroundRawSensor(**instance_data)
+        return WeatherStation.from_wunderground(WundergroundRawSensor(**instance_data))
 
     async def process_weathercloud(self, path: str):
         """Process WeatherCloud data."""
@@ -60,9 +60,10 @@ class CloudWeatherListener:
 
         data = dict(zip(segments[2::2], map(int, segments[3::2])))
 
-        fields = {f.metadata["arg"]: f.name for f in WeathercloudRawSensor.__dataclass_fields__.values() if "arg" in f.metadata}
-        instance_data = {field_name: data[arg] for arg, field_name in fields.items() if arg in data}
-        return WeathercloudRawSensor(**instance_data)
+        fields = {f.metadata["arg"]: [f.name, f.type] for f in WeathercloudRawSensor.__dataclass_fields__.values() if "arg" in f.metadata}
+        instance_data = {field[0]: field[1](data[arg]) for arg, field in fields.items() if arg in data}
+
+        return WeatherStation.from_weathercloud(WeathercloudRawSensor(**instance_data))
 
     async def handler(self, request: web.BaseRequest) -> web.Response:
         """AIOHTTP handler for the API."""

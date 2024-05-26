@@ -3,19 +3,37 @@
 from __future__ import annotations
 
 import asyncio
+from dataclasses import Field, fields
+import logging
 import sys
+from types import NoneType
 
-from aiocloudweather import CloudWeatherListener, CloudRawSensor
+from aiocloudweather import CloudWeatherListener, WeatherStation
+from aiocloudweather.sensor import Sensor
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def usage():
     """Print usage of the CLI."""
     print(f"Usage: {sys.argv[0]} port")
 
 
-async def my_handler(sensor: CloudRawSensor) -> None:
+async def my_handler(station: WeatherStation) -> None:
     """Callback handler for printing data."""
-    print("In my handler")
-    print(f"{str(sensor)}")
+
+    for sensor in fields(station):
+        if not sensor.type == Sensor:
+            continue
+        value: Field[Sensor] = getattr(station, sensor.name)
+        if value is None:
+            continue
+
+        print(f"{sensor.name}: {value.metric} ({value.metric_unit})")
+        print(f"{sensor.name}: {value.imperial} ({value.imperial_unit})")
+        print()
+
+    # print(f"{str(station)}")
 
 
 async def run_server(ecowitt_ws: CloudWeatherListener) -> None:

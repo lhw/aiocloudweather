@@ -1,9 +1,22 @@
 """"""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
+import logging
+from types import NoneType
 from typing import Final
 
-from aiocloudweather.conversion import (celsius_to_fahrenheit, fahrenheit_to_celsius, hpa_to_inhg, in_to_mm, inhg_to_hpa, lux_to_wm2, mm_to_in, mph_to_ms, ms_to_mph, wm2_to_lux)
+from aiocloudweather.conversion import (
+    celsius_to_fahrenheit,
+    fahrenheit_to_celsius,
+    hpa_to_inhg,
+    in_to_mm,
+    inhg_to_hpa,
+    lux_to_wm2,
+    mm_to_in,
+    mph_to_ms,
+    ms_to_mph,
+    wm2_to_lux,
+)
 from .const import (
     DEGREE,
     LIGHT_LUX,
@@ -17,13 +30,11 @@ from .const import (
     UnitOfVolumetricFlux,
 )
 
-@dataclass
-class CloudRawSensor:
-    station_id: str
-    station_key: str
+_LOGGER = logging.getLogger(__name__)
+
 
 @dataclass
-class WundergroundRawSensor(CloudRawSensor):
+class WundergroundRawSensor:
     """Wunderground sensor parsed from query string."""
 
     # /weatherstation/updateweatherstation.php?ID=12345&PASSWORD=12345&dateutc=2024-5-18+16%3A42%3A43&baromin=29.92&tempf=72.5&humidity=44&dewptf=49.2&rainin=0&dailyrainin=0&winddir=249&windspeedmph=2.0&windgustmph=2.7&UV=2&solarRadiation=289.2
@@ -37,55 +48,55 @@ class WundergroundRawSensor(CloudRawSensor):
     )
 
     barometer: float = field(
-        default=None, metadata={"units": UnitOfPressure.INHG, "arg": "baromin"}
+        default=None, metadata={"unit": UnitOfPressure.INHG, "arg": "baromin"}
     )
     temperature: float = field(
-        default=None, metadata={"units": UnitOfTemperature.FAHRENHEIT, "arg": "tempf"}
+        default=None, metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "tempf"}
     )
     humidity: float = field(
-        default=None, metadata={"units": PERCENTAGE, "arg": "humidity"}
+        default=None, metadata={"unit": PERCENTAGE, "arg": "humidity"}
     )
     indoor_temperature: float = field(
         default=None,
-        metadata={"units": UnitOfTemperature.FAHRENHEIT, "arg": "indoortempf"},
+        metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "indoortempf"},
     )
     indoor_humidity: float = field(
-        default=None, metadata={"units": PERCENTAGE, "arg": "indoorhumidity"}
+        default=None, metadata={"unit": PERCENTAGE, "arg": "indoorhumidity"}
     )
 
     dewpoint: float = field(
-        default=None, metadata={"units": UnitOfTemperature.FAHRENHEIT, "arg": "dewptf"}
+        default=None, metadata={"unit": UnitOfTemperature.FAHRENHEIT, "arg": "dewptf"}
     )
     rain: float = field(
         default=None,
-        metadata={"units": UnitOfPrecipitationDepth.INCHES, "arg": "rainin"},
+        metadata={"unit": UnitOfPrecipitationDepth.INCHES, "arg": "rainin"},
     )
     daily_rain: float = field(
         default=None,
-        metadata={"units": UnitOfPrecipitationDepth.INCHES, "arg": "dailyrainin"},
+        metadata={"unit": UnitOfPrecipitationDepth.INCHES, "arg": "dailyrainin"},
     )
     wind_direction: float = field(
-        default=None, metadata={"units": DEGREE, "arg": "winddir"}
+        default=None, metadata={"unit": DEGREE, "arg": "winddir"}
     )
     wind_speed: float = field(
         default=None,
-        metadata={"units": UnitOfSpeed.MILES_PER_HOUR, "arg": "windspeedmph"},
+        metadata={"unit": UnitOfSpeed.MILES_PER_HOUR, "arg": "windspeedmph"},
     )
     wind_gust_speed: float = field(
         default=None,
-        metadata={"units": UnitOfSpeed.MILES_PER_HOUR, "arg": "windgustmph"},
+        metadata={"unit": UnitOfSpeed.MILES_PER_HOUR, "arg": "windgustmph"},
     )
     wind_gust_direction: float = field(
-        default=None, metadata={"units": DEGREE, "arg": "windgustdir"}
+        default=None, metadata={"unit": DEGREE, "arg": "windgustdir"}
     )
-    uv: int = field(default=None, metadata={"units": UV_INDEX, "arg": "UV"})
+    uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "UV"})
     solar_radiation: float = field(
-        default=None, metadata={"units": LIGHT_LUX, "arg": "solarRadiation"}
+        default=None, metadata={"unit": LIGHT_LUX, "arg": "solarRadiation"}
     )
 
 
 @dataclass
-class WeathercloudRawSensor(CloudRawSensor):
+class WeathercloudRawSensor:
     """WeatherCloud API sensor parsed from the query path."""
 
     # /v01/set/wid/12345/key/12345/bar/10130/temp/164/hum/80/wdir/288/wspd/0/dew/129/heat/164/rainrate/0/rain/0/uvi/0/solarrad/47
@@ -94,49 +105,49 @@ class WeathercloudRawSensor(CloudRawSensor):
     station_key: str = field(metadata={"arg": "key"})
 
     barometer: int = field(
-        default=None, metadata={"units": UnitOfPressure.HPA, "arg": "bar"}
+        default=None, metadata={"unit": UnitOfPressure.HPA, "arg": "bar"}
     )
     temperature: int = field(
-        default=None, metadata={"units": UnitOfTemperature.CELSIUS, "arg": "temp"}
+        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "temp"}
     )
-    humidity: int = field(default=None, metadata={"units": PERCENTAGE, "arg": "hum"})
+    humidity: int = field(default=None, metadata={"unit": PERCENTAGE, "arg": "hum"})
     indoor_temperature: int = field(
-        default=None, metadata={"units": UnitOfTemperature.CELSIUS, "arg": "tempin"}
+        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "tempin"}
     )
     indoor_humidity: int = field(
-        default=None, metadata={"units": PERCENTAGE, "arg": "humin"}
+        default=None, metadata={"unit": PERCENTAGE, "arg": "humin"}
     )
     dewpoint: int = field(
-        default=None, metadata={"units": UnitOfTemperature.CELSIUS, "arg": "dew"}
+        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "dew"}
     )
     heat_index: int = field(
-        default=None, metadata={"units": UnitOfTemperature.CELSIUS, "arg": "heat"}
+        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "heat"}
     )
     daily_rain: int = field(
         default=None,
-        metadata={"units": UnitOfPrecipitationDepth.MILLIMETERS, "arg": "rain"},
+        metadata={"unit": UnitOfPrecipitationDepth.MILLIMETERS, "arg": "rain"},
     )
-    rain_rate: int = field(
+    rain: int = field(
         default=None,
         metadata={
-            "units": UnitOfVolumetricFlux.MILLIMETERS_PER_HOUR,
+            "unit": UnitOfVolumetricFlux.MILLIMETERS_PER_HOUR,
             "arg": "rainrate",
         },
     )
-    wind_direction: int = field(default=None, metadata={"units": DEGREE, "arg": "wdir"})
+    wind_direction: int = field(default=None, metadata={"unit": DEGREE, "arg": "wdir"})
     wind_speed: int = field(
-        default=None, metadata={"units": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspd"}
+        default=None, metadata={"unit": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspd"}
     )
     wind_gust_speed: int = field(
-        default=None, metadata={"units": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspdhi"}
+        default=None, metadata={"unit": UnitOfSpeed.METERS_PER_SECOND, "arg": "wspdhi"}
     )
     wind_chill: int = field(
-        default=None, metadata={"units": UnitOfTemperature.CELSIUS, "arg": "chill"}
+        default=None, metadata={"unit": UnitOfTemperature.CELSIUS, "arg": "chill"}
     )
-    uv: int = field(default=None, metadata={"units": UV_INDEX, "arg": "uvi"})
+    uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "uvi"})
     solar_radiation: int = field(
         default=None,
-        metadata={"units": UnitOfIrradiance.WATTS_PER_SQUARE_METER, "arg": "solarrad"},
+        metadata={"unit": UnitOfIrradiance.WATTS_PER_SQUARE_METER, "arg": "solarrad"},
     )
 
 
@@ -156,57 +167,127 @@ metric_to_imperial: Final = {
     UnitOfSpeed.METERS_PER_SECOND: ms_to_mph,
 }
 
+
 @dataclass
-class WeatherStationSensor:
+class Sensor:
+    """ """
+
+    metric: float
+    metric_unit: str
+    imperial: float
+    imperial_unit: str
+
+
+@dataclass
+class WeatherStation:
     """
     Weather data.
     """
+
     station_id: str
     station_key: str
-    date_utc: str
+    date_utc: str = field(default=None)
 
-    barometer: tuple[float,float]
-    temperature: tuple[float, float]
-    humidity: tuple[float, float]
-    indoor_temperature: tuple[float, float]
-    indoor_humidity: tuple[float, float]
-    dewpoint: tuple[float, float]
-    rain: tuple[float, float]
-    daily_rain: tuple[float, float]
-    wind_direction: tuple[float, float]
-    wind_speed: tuple[float, float]
-    wind_gust_speed: tuple[float, float]
-    wind_gust_direction: tuple[float, float]
-    uv: tuple[int, int]
-    solar_radiation: tuple[float, float]
+    barometer: Sensor = field(default=None)
+    temperature: Sensor = field(default=None)
+    humidity: Sensor = field(default=None)
+    indoor_temperature: Sensor = field(default=None)
+    indoor_humidity: Sensor = field(default=None)
+    dewpoint: Sensor = field(default=None)
+    rain: Sensor = field(default=None)
+    daily_rain: Sensor = field(default=None)
+    wind_direction: Sensor = field(default=None)
+    wind_speed: Sensor = field(default=None)
+    wind_gust_speed: Sensor = field(default=None)
+    wind_gust_direction: Sensor = field(default=None)
+    uv: Sensor = field(default=None)
+    solar_radiation: Sensor = field(default=None)
+    heat_index: Sensor = field(default=None)
 
     @staticmethod
-    def from_wunderground(data: WundergroundRawSensor) -> 'WeatherStationSensor':
-        converted_data = {}
-        for field, value in data.__dict__.items():
-            if field.startswith('_') or field == 'station_id' or field == 'station_key':
+    def from_wunderground(data: WundergroundRawSensor) -> "WeatherStation":
+        sensor_data = {}
+        for field in fields(data):
+            if field.name == "station_id" or field.name == "station_key":
                 continue
-            units = data.__dataclass_fields__[field].metadata.get('units')
-            conversion_func = imperial_to_metric.get(units)
+            value = getattr(data, field.name)
+            if value is None:
+                continue
+
+            value = field.type(value)  # No idea why this is needed
+            unit = field.metadata.get("unit")
+            conversion_func = imperial_to_metric.get(unit)
+
             if conversion_func:
-                converted_value = conversion_func(value)
-                converted_data[field] = converted_value
+                try:
+                    converted_value = conversion_func(value)
+                except TypeError as e:
+                    _LOGGER.error(
+                        "Failed to convert %s from %s to %s: %s[%s] -> %s",
+                        field,
+                        unit,
+                        conversion_func.unit,
+                        value,
+                        type(value),
+                        e,
+                    )
+                    continue
+                sensor_data[field.name] = Sensor(
+                    metric=converted_value,
+                    metric_unit=conversion_func.unit,
+                    imperial=value,
+                    imperial_unit=unit,
+                )
             else:
-                converted_data[field] = value
-        return WeatherStationSensor(**converted_data)
-    
+                sensor_data[field.name] = Sensor(
+                    metric=value, metric_unit=unit, imperial=value, imperial_unit=unit
+                )
+        return WeatherStation(
+            station_id=data.station_id, station_key=data.station_key, **sensor_data
+        )
+
     @staticmethod
-    def from_weathercloud(data: WeathercloudRawSensor) -> 'WeatherStationSensor':
-        converted_data = {}
-        for field, value in data.__dict__.items():
-            if field.startswith('_') or field == 'station_id' or field == 'station_key':
+    def from_weathercloud(data: WeathercloudRawSensor) -> "WeatherStation":
+        sensor_data = {}
+        for field in fields(data):
+            if field.name == "station_id" or field.name == "station_key":
                 continue
-            units = data.__dataclass_fields__[field].metadata.get('units')
-            conversion_func = metric_to_imperial.get(units)
+            value = getattr(data, field.name)
+            if value is None:
+                continue
+
+            value = field.type(value)  # No idea why this is needed
+            value = float(value) / 10  # All values are multiplied by 10
+            unit = field.metadata.get("unit")
+            conversion_func = metric_to_imperial.get(unit)
+
             if conversion_func:
-                val = value/10
+                try:
+                    converted_value = conversion_func(float(value))
+                except TypeError as e:
+                    _LOGGER.error(
+                        "Failed to convert %s from %s to %s: %s -> %s",
+                        field,
+                        unit,
+                        conversion_func.unit,
+                        value,
+                        e,
+                    )
+                    continue
                 converted_value = conversion_func(value)
-                converted_data[field] = converted_value
+                sensor_data[field.name] = Sensor(
+                    metric=float(value),
+                    metric_unit=unit,
+                    imperial=converted_value,
+                    imperial_unit=conversion_func.unit,
+                )
             else:
-                converted_data[field] = value
-        return WeatherStationSensor(**converted_data)
+                sensor_data[field.name] = Sensor(
+                    metric=value, metric_unit=unit, imperial=value, imperial_unit=unit
+                )
+
+        return WeatherStation(
+            station_id=str(data.station_id),
+            station_key=str(data.station_key),
+            **sensor_data
+        )
