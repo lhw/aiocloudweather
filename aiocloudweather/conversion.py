@@ -35,7 +35,7 @@ def lux_to_wm2(lux: float) -> float:
 
 @unit(UnitOfSpeed.METERS_PER_SECOND)
 def mph_to_ms(speed: float) -> float:
-    return speed * 2.23694
+    return speed * 0.44704
 
 
 @unit(UnitOfPressure.INHG)
@@ -56,4 +56,4 @@ def wm2_to_lux(lux: float) -> float:
 
 @unit(UnitOfSpeed.MILES_PER_HOUR)
 def ms_to_mph(speed: float) -> float:
-    return speed * 0.44704
+    return speed * 2.23694

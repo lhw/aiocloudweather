@@ -170,7 +170,7 @@ metric_to_imperial: Final = {
 
 @dataclass
 class Sensor:
-    """ """
+    """Represents a weather sensor."""
 
     metric: float
     metric_unit: str
@@ -181,7 +181,7 @@ class Sensor:
 @dataclass
 class WeatherStation:
     """
-    Weather data.
+    Represents a weather station with various sensor readings.
     """
 
     station_id: str
@@ -206,6 +206,19 @@ class WeatherStation:
 
     @staticmethod
     def from_wunderground(data: WundergroundRawSensor) -> "WeatherStation":
+        """
+        Converts raw sensor data from the Wunderground API into a WeatherStation object.
+
+        Args:
+            data (WundergroundRawSensor): The raw sensor data from the Wunderground API.
+
+        Returns:
+            WeatherStation: The converted WeatherStation object.
+
+        Raises:
+            TypeError: If there is an error converting the sensor data.
+
+        """
         sensor_data = {}
         for field in fields(data):
             if field.name == "station_id" or field.name == "station_key":
@@ -248,6 +261,19 @@ class WeatherStation:
 
     @staticmethod
     def from_weathercloud(data: WeathercloudRawSensor) -> "WeatherStation":
+        """
+        Converts raw sensor data from the Weathercloud.net API into a WeatherStation object.
+
+        Args:
+            data (WeathercloudRawSensor): The raw sensor data from the Weathercloud.net API.
+
+        Returns:
+            WeatherStation: The converted WeatherStation object.
+
+        Raises:
+            TypeError: If there is an error converting the sensor data.
+
+        """
         sensor_data = {}
         for field in fields(data):
             if field.name == "station_id" or field.name == "station_key":
@@ -257,11 +283,11 @@ class WeatherStation:
                 continue
 
             value = field.type(value)  # No idea why this is needed
-            value = float(value) / 10  # All values are multiplied by 10
             unit = field.metadata.get("unit")
             conversion_func = metric_to_imperial.get(unit)
 
             if conversion_func:
+                value = float(value) / 10  # All values are shifted by 10
                 try:
                     converted_value = conversion_func(float(value))
                 except TypeError as e:
