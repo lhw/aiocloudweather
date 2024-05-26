@@ -2,4 +2,4 @@
 
 
 from .server import CloudWeatherListener
-from .sensor import WeatherStation, WeathercloudRawSensor, WundergroundRawSensor
+from .sensor import WeatherStation, Sensor

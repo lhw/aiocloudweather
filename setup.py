@@ -1,4 +1,4 @@
-"""Setup module for EcoWitt."""
+"""Setup module for Cloud Weather."""
 
 from pathlib import Path
 

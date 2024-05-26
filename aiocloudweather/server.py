@@ -1,10 +1,11 @@
-"""aioEcoWitt API server."""
+"""aioCloudWeather API server."""
 
 from __future__ import annotations
 
 import logging
 from typing import Callable
 from copy import deepcopy
+from dataclasses import fields
 
 from aiohttp import web
 
@@ -15,10 +16,10 @@ _CLOUDWEATHER_LISTEN_PORT = 49199
 
 
 class CloudWeatherListener:
-    """EcoWitt Server API server."""
+    """CloudWeather Server API server."""
 
     def __init__(self, port: int = _CLOUDWEATHER_LISTEN_PORT):
-        """Initialize EcoWitt Server."""
+        """Initialize CloudWeather Server."""
         # API Constants
         self.port: int = port
 
@@ -28,7 +29,7 @@ class CloudWeatherListener:
         self.site: None | web.TCPSite = None
 
         # internal data
-        self.last_values: dict[str, dict[str, str | None]] = {}
+        self.last_values: dict[str, WeatherStation] = {}
         self.new_dataset_cb: list[Callable[[WeatherStation], None]] = []
 
         # storage
@@ -45,11 +46,11 @@ class CloudWeatherListener:
     async def process_wunderground(self, data: dict[str, str | float]) -> WeatherStation:
         """Process Wunderground data."""
 
-        fields = {f.metadata["arg"]: [f.name, f.type] for f in WundergroundRawSensor.__dataclass_fields__.values() if "arg" in f.metadata}
+        dfields = {f.metadata["arg"]: f for f in fields(WundergroundRawSensor) if "arg" in f.metadata}
         instance_data = {}
-        for arg, field in fields.items():
+        for arg, field in dfields.items():
             if arg in data:
-                instance_data[field[0]] = field[1](data[arg])
+                instance_data[field.name] = field.type(data[arg])
 
         return WeatherStation.from_wunderground(WundergroundRawSensor(**instance_data))
 
@@ -60,8 +61,8 @@ class CloudWeatherListener:
 
         data = dict(zip(segments[2::2], map(int, segments[3::2])))
 
-        fields = {f.metadata["arg"]: [f.name, f.type] for f in WeathercloudRawSensor.__dataclass_fields__.values() if "arg" in f.metadata}
-        instance_data = {field[0]: field[1](data[arg]) for arg, field in fields.items() if arg in data}
+        dfields = {f.metadata["arg"]: f for f in fields(WeathercloudRawSensor) if "arg" in f.metadata}
+        instance_data = {field.name: field.type(data[arg]) for arg, field in dfields.items() if arg in data}
 
         return WeatherStation.from_weathercloud(WeathercloudRawSensor(**instance_data))
 
@@ -72,7 +73,7 @@ class CloudWeatherListener:
             raise web.HTTPBadRequest()
 
         station_id: str = None
-        dataset: WundergroundRawSensor | WeathercloudRawSensor = None
+        dataset: WeatherStation = None
         if request.path.startswith('/weatherstation/updateweatherstation.php'):
             dataset = await self.process_wunderground(request.query)
             station_id = dataset.station_id

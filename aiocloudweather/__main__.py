@@ -36,9 +36,9 @@ async def my_handler(station: WeatherStation) -> None:
     # print(f"{str(station)}")
 
 
-async def run_server(ecowitt_ws: CloudWeatherListener) -> None:
+async def run_server(cloudweather_ws: CloudWeatherListener) -> None:
     """Run server in endless mode."""
-    await ecowitt_ws.start()
+    await cloudweather_ws.start()
     while True:
         await asyncio.sleep(100000)
 
