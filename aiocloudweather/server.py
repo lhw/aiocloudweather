@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import logging
+import time
 from typing import Callable
 from copy import deepcopy
 from dataclasses import fields
 
 from aiohttp import web
 
-from aiocloudweather.sensor import WundergroundRawSensor, WeathercloudRawSensor, WeatherStation
+from aiocloudweather.station import WundergroundRawSensor, WeathercloudRawSensor, WeatherStation
 
 _LOGGER = logging.getLogger(__name__)
 _CLOUDWEATHER_LISTEN_PORT = 49199
@@ -30,6 +31,7 @@ class CloudWeatherListener:
 
         # internal data
         self.last_values: dict[str, WeatherStation] = {}
+        self.last_updates: dict[str, float] = {}
         self.new_dataset_cb: list[Callable[[WeatherStation], None]] = []
 
         # storage
@@ -84,6 +86,9 @@ class CloudWeatherListener:
         if station_id not in self.stations:
             _LOGGER.debug("Found new station: %s", station_id)
             self.stations.append(station_id)
+
+        self.last_updates[station_id] = time.monotonic()
+        dataset.last_update = self.last_updates[station_id]
 
         try:
             await self._new_dataset_cb(dataset)

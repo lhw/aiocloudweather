@@ -9,7 +9,7 @@ import sys
 from types import NoneType
 
 from aiocloudweather import CloudWeatherListener, WeatherStation
-from aiocloudweather.sensor import Sensor
+from aiocloudweather.station import Sensor
 
 _LOGGER = logging.getLogger(__name__)
 

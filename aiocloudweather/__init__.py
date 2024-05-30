@@ -2,4 +2,4 @@
 
 
 from .server import CloudWeatherListener
-from .sensor import WeatherStation, Sensor
+from .station import WeatherStation, Sensor

@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass, field, fields
 import logging
-from types import NoneType
 from typing import Final
 
 from aiocloudweather.conversion import (
@@ -186,6 +185,8 @@ class WeatherStation:
 
     station_id: str
     station_key: str
+    update_time: float = field(default=None)
+
     date_utc: str = field(default=None)
 
     barometer: Sensor = field(default=None)

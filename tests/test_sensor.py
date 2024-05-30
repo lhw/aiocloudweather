@@ -1,4 +1,4 @@
-from aiocloudweather.sensor import WeatherStation, WundergroundRawSensor, WeathercloudRawSensor
+from aiocloudweather.station import WeatherStation, WundergroundRawSensor, WeathercloudRawSensor
 
 def test_weather_station_from_wunderground():
     raw_sensor_data = WundergroundRawSensor(
