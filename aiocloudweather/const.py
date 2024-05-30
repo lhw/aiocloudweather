@@ -12,12 +12,14 @@ PERCENTAGE: Final = "%"
 # UV Index units
 UV_INDEX: Final = "UV index"
 
+
 # Irradiance units
 class UnitOfIrradiance(StrEnum):
     """Irradiance units."""
 
     WATTS_PER_SQUARE_METER = "W/m²"
     BTUS_PER_HOUR_SQUARE_FOOT = "BTU/(h⋅ft²)"
+
 
 class UnitOfPrecipitationDepth(StrEnum):
     """Precipitation depth.
@@ -35,6 +37,7 @@ class UnitOfPrecipitationDepth(StrEnum):
     CENTIMETERS = "cm"
     """Derived from cm³/cm²"""
 
+
 # Pressure units
 class UnitOfPressure(StrEnum):
     """Pressure units."""
@@ -49,6 +52,7 @@ class UnitOfPressure(StrEnum):
     INHG = "inHg"
     PSI = "psi"
 
+
 # Speed units
 class UnitOfSpeed(StrEnum):
     """Speed units."""
@@ -60,6 +64,7 @@ class UnitOfSpeed(StrEnum):
     KNOTS = "kn"
     MILES_PER_HOUR = "mph"
 
+
 # Temperature units
 class UnitOfTemperature(StrEnum):
     """Temperature units."""
@@ -67,6 +72,7 @@ class UnitOfTemperature(StrEnum):
     CELSIUS = "°C"
     FAHRENHEIT = "°F"
     KELVIN = "K"
+
 
 class UnitOfVolumetricFlux(StrEnum):
     """Volumetric flux, commonly used for precipitation intensity.

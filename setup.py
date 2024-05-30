@@ -22,7 +22,9 @@ setup(
     package_data={"aiocoudweather": ["py.typed"]},
     python_requires=">=3.12",
     install_requires=["aiohttp>3"],
-    entry_points={"console_scripts": ["cloudweather-testserver = aiocloudweather.__main__:main"]},
+    entry_points={
+        "console_scripts": ["cloudweather-testserver = aiocloudweather.__main__:main"]
+    },
     include_package_data=True,
     zip_safe=False,
     classifiers=[

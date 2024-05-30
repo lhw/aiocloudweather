@@ -10,7 +10,11 @@ from dataclasses import fields
 
 from aiohttp import web
 
-from aiocloudweather.station import WundergroundRawSensor, WeathercloudRawSensor, WeatherStation
+from aiocloudweather.station import (
+    WundergroundRawSensor,
+    WeathercloudRawSensor,
+    WeatherStation,
+)
 
 _LOGGER = logging.getLogger(__name__)
 _CLOUDWEATHER_LISTEN_PORT = 49199
@@ -45,10 +49,16 @@ class CloudWeatherListener:
         for callback in self.new_dataset_cb:
             await callback(dataset)
 
-    async def process_wunderground(self, data: dict[str, str | float]) -> WeatherStation:
+    async def process_wunderground(
+        self, data: dict[str, str | float]
+    ) -> WeatherStation:
         """Process Wunderground data."""
 
-        dfields = {f.metadata["arg"]: f for f in fields(WundergroundRawSensor) if "arg" in f.metadata}
+        dfields = {
+            f.metadata["arg"]: f
+            for f in fields(WundergroundRawSensor)
+            if "arg" in f.metadata
+        }
         instance_data = {}
         for arg, field in dfields.items():
             if arg in data:
@@ -59,12 +69,20 @@ class CloudWeatherListener:
     async def process_weathercloud(self, path: str):
         """Process WeatherCloud data."""
 
-        segments = [seg for seg in path.split('/') if seg]
+        segments = [seg for seg in path.split("/") if seg]
 
         data = dict(zip(segments[2::2], map(int, segments[3::2])))
 
-        dfields = {f.metadata["arg"]: f for f in fields(WeathercloudRawSensor) if "arg" in f.metadata}
-        instance_data = {field.name: field.type(data[arg]) for arg, field in dfields.items() if arg in data}
+        dfields = {
+            f.metadata["arg"]: f
+            for f in fields(WeathercloudRawSensor)
+            if "arg" in f.metadata
+        }
+        instance_data = {
+            field.name: field.type(data[arg])
+            for arg, field in dfields.items()
+            if arg in data
+        }
 
         return WeatherStation.from_weathercloud(WeathercloudRawSensor(**instance_data))
 
@@ -76,13 +94,13 @@ class CloudWeatherListener:
 
         station_id: str = None
         dataset: WeatherStation = None
-        if request.path.startswith('/weatherstation/updateweatherstation.php'):
+        if request.path.startswith("/weatherstation/updateweatherstation.php"):
             dataset = await self.process_wunderground(request.query)
             station_id = dataset.station_id
-        elif request.path.startswith('/v01/set'):
+        elif request.path.startswith("/v01/set"):
             dataset = await self.process_weathercloud(request.path)
             station_id = dataset.station_id
-        
+
         if station_id not in self.stations:
             _LOGGER.debug("Found new station: %s", station_id)
             self.stations.append(station_id)

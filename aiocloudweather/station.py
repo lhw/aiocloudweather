@@ -1,4 +1,4 @@
-""""""
+"""The module parses incoming weather data from various sources into a common format."""
 
 from dataclasses import dataclass, field, fields
 import logging
@@ -150,7 +150,7 @@ class WeathercloudRawSensor:
     )
 
 
-imperial_to_metric: Final = {
+IMPERIAL_TO_METRIC: Final = {
     UnitOfPressure.INHG: inhg_to_hpa,
     UnitOfTemperature.FAHRENHEIT: fahrenheit_to_celsius,
     UnitOfPrecipitationDepth.INCHES: in_to_mm,
@@ -158,7 +158,7 @@ imperial_to_metric: Final = {
     UnitOfSpeed.MILES_PER_HOUR: mph_to_ms,
 }
 
-metric_to_imperial: Final = {
+METRIC_TO_IMPERIAL: Final = {
     UnitOfPressure.HPA: hpa_to_inhg,
     UnitOfTemperature.CELSIUS: celsius_to_fahrenheit,
     UnitOfPrecipitationDepth.MILLIMETERS: mm_to_in,
@@ -221,16 +221,16 @@ class WeatherStation:
 
         """
         sensor_data = {}
-        for field in fields(data):
-            if field.name == "station_id" or field.name == "station_key":
+        for sensor_field in fields(data):
+            if sensor_field.name in ("station_id", "station_key"):
                 continue
-            value = getattr(data, field.name)
+            value = getattr(data, sensor_field.name)
             if value is None:
                 continue
 
-            value = field.type(value)  # No idea why this is needed
-            unit = field.metadata.get("unit")
-            conversion_func = imperial_to_metric.get(unit)
+            value = sensor_field.type(value)  # No idea why this is needed
+            unit = sensor_field.metadata.get("unit")
+            conversion_func = IMPERIAL_TO_METRIC.get(unit)
 
             if conversion_func:
                 try:
@@ -238,7 +238,7 @@ class WeatherStation:
                 except TypeError as e:
                     _LOGGER.error(
                         "Failed to convert %s from %s to %s: %s[%s] -> %s",
-                        field,
+                        sensor_field,
                         unit,
                         conversion_func.unit,
                         value,
@@ -246,14 +246,14 @@ class WeatherStation:
                         e,
                     )
                     continue
-                sensor_data[field.name] = Sensor(
+                sensor_data[sensor_field.name] = Sensor(
                     metric=converted_value,
                     metric_unit=conversion_func.unit,
                     imperial=value,
                     imperial_unit=unit,
                 )
             else:
-                sensor_data[field.name] = Sensor(
+                sensor_data[sensor_field.name] = Sensor(
                     metric=value, metric_unit=unit, imperial=value, imperial_unit=unit
                 )
         return WeatherStation(
@@ -276,16 +276,16 @@ class WeatherStation:
 
         """
         sensor_data = {}
-        for field in fields(data):
-            if field.name == "station_id" or field.name == "station_key":
+        for sensor_field in fields(data):
+            if sensor_field.name in ("station_id", "station_key"):
                 continue
-            value = getattr(data, field.name)
+            value = getattr(data, sensor_field.name)
             if value is None:
                 continue
 
-            value = field.type(value)  # No idea why this is needed
-            unit = field.metadata.get("unit")
-            conversion_func = metric_to_imperial.get(unit)
+            value = sensor_field.type(value)  # No idea why this is needed
+            unit = sensor_field.metadata.get("unit")
+            conversion_func = METRIC_TO_IMPERIAL.get(unit)
 
             if conversion_func:
                 value = float(value) / 10  # All values are shifted by 10
@@ -294,7 +294,7 @@ class WeatherStation:
                 except TypeError as e:
                     _LOGGER.error(
                         "Failed to convert %s from %s to %s: %s -> %s",
-                        field,
+                        sensor_field,
                         unit,
                         conversion_func.unit,
                         value,
@@ -302,19 +302,19 @@ class WeatherStation:
                     )
                     continue
                 converted_value = conversion_func(value)
-                sensor_data[field.name] = Sensor(
+                sensor_data[sensor_field.name] = Sensor(
                     metric=float(value),
                     metric_unit=unit,
                     imperial=converted_value,
                     imperial_unit=conversion_func.unit,
                 )
             else:
-                sensor_data[field.name] = Sensor(
+                sensor_data[sensor_field.name] = Sensor(
                     metric=value, metric_unit=unit, imperial=value, imperial_unit=unit
                 )
 
         return WeatherStation(
             station_id=str(data.station_id),
             station_key=str(data.station_key),
-            **sensor_data
+            **sensor_data,
         )

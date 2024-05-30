@@ -1,4 +1,9 @@
-from aiocloudweather.station import WeatherStation, WundergroundRawSensor, WeathercloudRawSensor
+from aiocloudweather.station import (
+    WeatherStation,
+    WundergroundRawSensor,
+    WeathercloudRawSensor,
+)
+
 
 def test_weather_station_from_wunderground():
     raw_sensor_data = WundergroundRawSensor(
@@ -14,7 +19,7 @@ def test_weather_station_from_wunderground():
         wind_speed=2.0,
         wind_gust_speed=2.7,
         uv=2,
-        solar_radiation=289.2
+        solar_radiation=289.2,
     )
     weather_station = WeatherStation.from_wunderground(raw_sensor_data)
 
@@ -33,6 +38,7 @@ def test_weather_station_from_wunderground():
     assert weather_station.humidity.imperial == 44
     assert weather_station.humidity.imperial_unit == "%"
 
+
 def test_weather_station_from_weathercloud():
     raw_sensor_data = WeathercloudRawSensor(
         station_id="12345",
@@ -47,7 +53,7 @@ def test_weather_station_from_weathercloud():
         wind_speed=0,
         wind_gust_speed=0,
         uv=0,
-        solar_radiation=470
+        solar_radiation=470,
     )
     weather_station = WeatherStation.from_weathercloud(raw_sensor_data)
 

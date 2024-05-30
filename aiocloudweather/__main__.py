@@ -6,7 +6,6 @@ import asyncio
 from dataclasses import Field, fields
 import logging
 import sys
-from types import NoneType
 
 from aiocloudweather import CloudWeatherListener, WeatherStation
 from aiocloudweather.station import Sensor
