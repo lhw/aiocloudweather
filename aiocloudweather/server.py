@@ -66,13 +66,10 @@ class CloudWeatherListener:
 
         return WeatherStation.from_wunderground(WundergroundRawSensor(**instance_data))
 
-    async def process_weathercloud(self, path: str):
+    async def process_weathercloud(self, segments: list[str]) -> WeatherStation:
         """Process WeatherCloud data."""
 
-        segments = [seg for seg in path.split("/") if seg]
-
-        data = dict(zip(segments[2::2], map(int, segments[3::2])))
-
+        data = dict(zip(segments[::2], map(int, segments[1::2])))
         dfields = {
             f.metadata["arg"]: f
             for f in fields(WeathercloudRawSensor)
@@ -94,11 +91,13 @@ class CloudWeatherListener:
 
         station_id: str = None
         dataset: WeatherStation = None
-        if request.path.startswith("/weatherstation/updateweatherstation.php"):
+        if request.path.endswith("/weatherstation/updateweatherstation.php"):
             dataset = await self.process_wunderground(request.query)
             station_id = dataset.station_id
-        elif request.path.startswith("/v01/set"):
-            dataset = await self.process_weathercloud(request.path)
+        elif "/v01/set" in request.path:
+            dataset_path = request.path.split("/v01/set/", 1)[1]
+            path_segments = dataset_path.split("/")
+            dataset = await self.process_weathercloud(path_segments)
             station_id = dataset.station_id
 
         if station_id not in self.stations:
