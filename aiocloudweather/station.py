@@ -171,6 +171,8 @@ METRIC_TO_IMPERIAL: Final = {
 class Sensor:
     """Represents a weather sensor."""
 
+    name: str
+
     metric: float
     metric_unit: str
     imperial: float
@@ -185,6 +187,8 @@ class WeatherStation:
 
     station_id: str
     station_key: str
+    station_sw_version: str = field(default=None)
+    station_client_ip: str = field(default=None)
     update_time: float = field(default=None)
 
     date_utc: str = field(default=None)
@@ -247,6 +251,7 @@ class WeatherStation:
                     )
                     continue
                 sensor_data[sensor_field.name] = Sensor(
+                    name=sensor_field.name,
                     metric=converted_value,
                     metric_unit=conversion_func.unit,
                     imperial=value,
@@ -254,7 +259,11 @@ class WeatherStation:
                 )
             else:
                 sensor_data[sensor_field.name] = Sensor(
-                    metric=value, metric_unit=unit, imperial=value, imperial_unit=unit
+                    name=sensor_field.name,
+                    metric=value,
+                    metric_unit=unit,
+                    imperial=value,
+                    imperial_unit=unit,
                 )
         return WeatherStation(
             station_id=data.station_id, station_key=data.station_key, **sensor_data
@@ -303,6 +312,7 @@ class WeatherStation:
                     continue
                 converted_value = conversion_func(value)
                 sensor_data[sensor_field.name] = Sensor(
+                    name=sensor_field.name,
                     metric=float(value),
                     metric_unit=unit,
                     imperial=converted_value,
@@ -310,7 +320,11 @@ class WeatherStation:
                 )
             else:
                 sensor_data[sensor_field.name] = Sensor(
-                    metric=value, metric_unit=unit, imperial=value, imperial_unit=unit
+                    name=sensor_field.name,
+                    metric=value,
+                    metric_unit=unit,
+                    imperial=value,
+                    imperial_unit=unit,
                 )
 
         return WeatherStation(

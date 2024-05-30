@@ -106,7 +106,19 @@ class CloudWeatherListener:
             self.stations.append(station_id)
 
         self.last_updates[station_id] = time.monotonic()
-        dataset.last_update = self.last_updates[station_id]
+        dataset.update_time = self.last_updates[station_id]
+
+        # The User-Agent is the only recognizable information we have aside from the IP
+        # In case of the station at hand it just shows lwIP/2.1.2 of their IP stack
+        user_agent = request.headers.get("User-Agent")
+        if user_agent:
+            dataset.station_sw_version = user_agent
+
+        # Extract client IP from request just in case
+        if "X-Real-IP" in request.headers:
+            dataset.station_client_ip = request.headers["X-Real-IP"]
+        else:
+            dataset.station_client_ip = request.remote
 
         try:
             await self._new_dataset_cb(dataset)
