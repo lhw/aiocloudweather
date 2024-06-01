@@ -154,6 +154,7 @@ IMPERIAL_TO_METRIC: Final = {
     UnitOfPressure.INHG: inhg_to_hpa,
     UnitOfTemperature.FAHRENHEIT: fahrenheit_to_celsius,
     UnitOfPrecipitationDepth.INCHES: in_to_mm,
+    LIGHT_LUX: lux_to_wm2,
     UnitOfSpeed.MILES_PER_HOUR: mph_to_ms,
 }
 
@@ -161,6 +162,7 @@ METRIC_TO_IMPERIAL: Final = {
     UnitOfPressure.HPA: hpa_to_inhg,
     UnitOfTemperature.CELSIUS: celsius_to_fahrenheit,
     UnitOfPrecipitationDepth.MILLIMETERS: mm_to_in,
+    UnitOfIrradiance.WATTS_PER_SQUARE_METER: wm2_to_lux,
     UnitOfSpeed.METERS_PER_SECOND: ms_to_mph,
 }
 
