@@ -39,12 +39,6 @@ def in_to_mm(length: float) -> float:
     return length * 25.4
 
 
-@unit(UnitOfIrradiance.WATTS_PER_SQUARE_METER)
-def lux_to_wm2(lux: float) -> float:
-    """Convert lux to watts per square meter (W/m²)."""
-    return lux * 0.0079
-
-
 @unit(UnitOfSpeed.METERS_PER_SECOND)
 def mph_to_ms(speed: float) -> float:
     """Convert miles per hour (mph) to meters per second (m/s)."""
@@ -67,13 +61,6 @@ def celsius_to_fahrenheit(temp_c: float) -> float:
 def mm_to_in(length: float) -> float:
     """Convert millimeters (mm) to inches."""
     return length * 0.0393701
-
-
-@unit(LIGHT_LUX)
-def wm2_to_lux(lux: float) -> float:
-    """Convert watts per square meter (W/m²) to lux."""
-    return lux * 127
-
 
 @unit(UnitOfSpeed.MILES_PER_HOUR)
 def ms_to_mph(speed: float) -> float:
