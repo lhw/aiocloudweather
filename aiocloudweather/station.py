@@ -196,7 +196,9 @@ class WeatherStation:
     barometer: Sensor = field(default=None, metadata={"name": "Absolute Pressure"})
     temperature: Sensor = field(default=None, metadata={"name": "Outdoor Temperature"})
     humidity: Sensor = field(default=None, metadata={"name": "Outdoor Humidity"})
-    indoortemperature: Sensor = field(default=None, metadata={"name": "Indoor Temperature"})
+    indoortemperature: Sensor = field(
+        default=None, metadata={"name": "Indoor Temperature"}
+    )
     indoorhumidity: Sensor = field(default=None, metadata={"name": "Indoor Humidity"})
     dewpoint: Sensor = field(default=None, metadata={"name": "Outdoor Dewpoint"})
     rain: Sensor = field(default=None, metadata={"name": "Rain Rate"})
@@ -204,7 +206,9 @@ class WeatherStation:
     winddirection: Sensor = field(default=None, metadata={"name": "Wind Direction"})
     windspeed: Sensor = field(default=None, metadata={"name": "Wind Speed"})
     windgustspeed: Sensor = field(default=None, metadata={"name": "Wind Gust"})
-    windgustdirection: Sensor = field(default=None, metadata={"name": "Wind Gust Direction"})
+    windgustdirection: Sensor = field(
+        default=None, metadata={"name": "Wind Gust Direction"}
+    )
     uv: Sensor = field(default=None, metadata={"name": "UV Index"})
     solarradiation: Sensor = field(default=None, metadata={"name": "Solar Radiation"})
     heatindex: Sensor = field(default=None, metadata={"name": "Heat Index"})

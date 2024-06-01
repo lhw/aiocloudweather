@@ -14,12 +14,12 @@ def test_weather_station_from_wunderground():
         humidity=44,
         dewpoint=49.2,
         rain=0,
-        daily_rain=0,
-        wind_direction=249,
-        wind_speed=2.0,
-        wind_gust_speed=2.7,
+        dailyrain=0,
+        winddirection=249,
+        windspeed=2.0,
+        windgustspeed=2.7,
         uv=2,
-        solar_radiation=289.2,
+        solarradiation=289.2,
     )
     weather_station = WeatherStation.from_wunderground(raw_sensor_data)
 
@@ -48,12 +48,12 @@ def test_weather_station_from_weathercloud():
         humidity=80,
         dewpoint=129,
         rain=0,
-        daily_rain=0,
-        wind_direction=288,
-        wind_speed=0,
-        wind_gust_speed=0,
+        dailyrain=0,
+        winddirection=288,
+        windspeed=0,
+        windgustspeed=0,
         uv=0,
-        solar_radiation=470,
+        solarradiation=470,
     )
     weather_station = WeatherStation.from_weathercloud(raw_sensor_data)
 
