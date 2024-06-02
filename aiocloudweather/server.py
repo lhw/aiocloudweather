@@ -36,7 +36,9 @@ class CloudWeatherListener:
         # internal data
         self.last_values: dict[str, WeatherStation] = {}
         self.last_updates: dict[str, float] = {}
-        self.new_dataset_cb: list[Callable[[WeatherStation], Coroutine[Any, Any, Any]]] = []
+        self.new_dataset_cb: list[
+            Callable[[WeatherStation], Coroutine[Any, Any, Any]]
+        ] = []
 
         # storage
         self.stations: list[str] = []
