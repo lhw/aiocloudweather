@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Callable
+from typing import Any, Callable, Coroutine
 from copy import deepcopy
 from dataclasses import fields
 
@@ -36,7 +36,7 @@ class CloudWeatherListener:
         # internal data
         self.last_values: dict[str, WeatherStation] = {}
         self.last_updates: dict[str, float] = {}
-        self.new_dataset_cb: list[Callable[[WeatherStation], None]] = []
+        self.new_dataset_cb: list[Callable[[WeatherStation], Coroutine[Any, Any, Any]]] = []
 
         # storage
         self.stations: list[str] = []
