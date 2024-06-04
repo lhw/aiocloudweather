@@ -28,9 +28,8 @@ async def my_handler(station: WeatherStation) -> None:
         if value is None:
             continue
 
-        print(f"{sensor.name}: {value.metric} ({value.metric_unit})")
-        print(f"{sensor.name}: {value.imperial} ({value.imperial_unit})")
-        print()
+        # print(f"{sensor.name}: {value.metric} ({value.metric_unit})")
+        # print(f"{sensor.name}: {value.imperial} ({value.imperial_unit})")
 
     # print(f"{str(station)}")
 
@@ -49,7 +48,7 @@ def main() -> None:
         sys.exit(1)
 
     print(f"Firing up webserver to listen on port {sys.argv[1]}")
-    cloudweather_server = CloudWeatherListener(port=sys.argv[1])
+    cloudweather_server = CloudWeatherListener(port=sys.argv[1], proxy_enabled=True)
 
     cloudweather_server.new_dataset_cb.append(my_handler)
     try:

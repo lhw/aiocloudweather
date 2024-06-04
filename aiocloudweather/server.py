@@ -10,7 +10,8 @@ from dataclasses import fields
 
 from aiohttp import web
 
-from aiocloudweather.station import (
+from .proxy import CloudWeatherProxy, DataSink
+from .station import (
     WundergroundRawSensor,
     WeathercloudRawSensor,
     WeatherStation,
@@ -23,10 +24,19 @@ _CLOUDWEATHER_LISTEN_PORT = 49199
 class CloudWeatherListener:
     """CloudWeather Server API server."""
 
-    def __init__(self, port: int = _CLOUDWEATHER_LISTEN_PORT):
+    def __init__(
+        self, port: int = _CLOUDWEATHER_LISTEN_PORT, proxy_enabled=False, **kwargs: Any
+    ):
         """Initialize CloudWeather Server."""
         # API Constants
         self.port: int = port
+
+        # Proxy functionality
+        self.proxy_enabled: bool = proxy_enabled
+        if self.proxy_enabled:
+            self.proxy = CloudWeatherProxy(
+                dns_servers=kwargs.get("dns_servers", ["9.9.9.9"])
+            )
 
         # webserver
         self.server: None | web.Server = None
@@ -71,7 +81,7 @@ class CloudWeatherListener:
     async def process_weathercloud(self, segments: list[str]) -> WeatherStation:
         """Process WeatherCloud data."""
 
-        data = dict(zip(segments[::2], map(int, segments[1::2])))
+        data = dict(zip(segments[::2], segments[1::2]))
         dfields = {
             f.metadata["arg"]: f
             for f in fields(WeathercloudRawSensor)
@@ -93,14 +103,17 @@ class CloudWeatherListener:
 
         station_id: str = None
         dataset: WeatherStation = None
+        sink: DataSink = None
         if request.path.endswith("/weatherstation/updateweatherstation.php"):
             dataset = await self.process_wunderground(request.query)
             station_id = dataset.station_id
+            sink = DataSink.WUNDERGROUND
         elif "/v01/set" in request.path:
             dataset_path = request.path.split("/v01/set/", 1)[1]
             path_segments = dataset_path.split("/")
             dataset = await self.process_weathercloud(path_segments)
             station_id = dataset.station_id
+            sink = DataSink.WEATHERCLOUD
 
         if station_id not in self.stations:
             _LOGGER.debug("Found new station: %s", station_id)
@@ -125,6 +138,17 @@ class CloudWeatherListener:
             await self._new_dataset_cb(dataset)
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.warning("CloudWeather new dataset callback error: %s", err)
+
+        if self.proxy_enabled and sink is not None:
+            try:
+                response = await self.proxy.forward(sink, request)
+                _LOGGER.debug(
+                    "CloudWeather proxy response[%d]: %s",
+                    response.status_code,
+                    response.text,
+                )
+            except Exception as err:  # pylint: disable=broad-except
+                _LOGGER.warning("CloudWeather proxy error: %s", err)
 
         self.last_values[station_id] = deepcopy(dataset)
         return web.Response(text="OK")
