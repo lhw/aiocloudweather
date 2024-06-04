@@ -1,15 +1,15 @@
 
 {
-  "name": "CloudWeather Interceptor",
+  "name": "aiocloudweather",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
   "postCreateCommand": "pip3 install -e .",
   "runArgs": ["-e", "GIT_EDITOR=code --wait", "--privileged"],
   "customizations": {
     "extensions": [
       "ms-python.python",
-      "ms-python.vscode-pylance",
-      "visualstudioexptteam.vscodeintellicode",
-      "esbenp.prettier-vscode"
+      "github.vscode-pull-request-github",
+      "ryanluker.vscode-coverage-gutters",
+      "ms-python.vscode-pylance"
     ],
     "settings": {
       "terminal.integrated.profiles.linux": {
@@ -22,18 +22,16 @@
       "editor.formatOnSave": true,
       "editor.formatOnType": true,
       "files.trimTrailingWhitespace": true,
-      "python.pythonPath": "/usr/local/bin/python3",
-      "python.linting.pylintEnabled": true,
+      "files.eol": "\n",
+      "editor.tabSize": 4,
+      "python.pythonPath": "/usr/bin/python3",
+      "python.analysis.autoSearchPaths": false,
       "python.linting.enabled": true,
       "python.formatting.provider": "black",
-      "python.formatting.blackArgs": ["--target-version", "py39"],
-      "python.formatting.blackPath": "/usr/local/bin/black",
-      "python.linting.banditPath": "/usr/local/bin/bandit",
-      "python.linting.flake8Path": "/usr/local/bin/flake8",
-      "python.linting.mypyPath": "/usr/local/bin/mypy",
-      "python.linting.pylintPath": "/usr/local/bin/pylint",
-      "python.linting.pydocstylePath": "/usr/local/bin/pydocstyle"
-    }
-  },
-  "mounts": [ "type=volume,target=/var/lib/docker" ]
+      "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+      "python.linting.pylintArgs": [
+          "--disable=C0114,C0115,C0116"
+      ]
+}
+  }
 }
