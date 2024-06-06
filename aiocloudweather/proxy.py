@@ -5,8 +5,6 @@ from aiohttp import web, TCPConnector, ClientSession
 from urllib.parse import quote
 from aiohttp.resolver import AsyncResolver
 
-import requests
-
 
 class DataSink(Enum):
     """Data sinks for the CloudWeather API."""
