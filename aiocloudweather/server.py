@@ -25,18 +25,19 @@ class CloudWeatherListener:
     """CloudWeather Server API server."""
 
     def __init__(
-        self, port: int = _CLOUDWEATHER_LISTEN_PORT, proxy_enabled=False, **kwargs: Any
+        self,
+        port: int = _CLOUDWEATHER_LISTEN_PORT,
+        proxy_sinks: list[DataSink] = [],
+        dns_servers: list[str] = ["9.9.9.9"],
     ):
         """Initialize CloudWeather Server."""
         # API Constants
         self.port: int = port
 
         # Proxy functionality
-        self.proxy_enabled: bool = proxy_enabled
+        self.proxy_enabled: bool = len(proxy_sinks) > 0
         if self.proxy_enabled:
-            self.proxy = CloudWeatherProxy(
-                dns_servers=kwargs.get("dns_servers", ["9.9.9.9"])
-            )
+            self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers)
 
         # webserver
         self.server: None | web.Server = None

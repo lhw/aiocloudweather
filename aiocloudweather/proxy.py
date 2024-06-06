@@ -16,8 +16,9 @@ class DataSink(Enum):
 class CloudWeatherProxy:
     """Proxy for forwarding data to the CloudWeather API."""
 
-    def __init__(self, dns_servers: list[str]):
+    def __init__(self, proxied_sinks: list[DataSink], dns_servers: list[str]):
         resolver = AsyncResolver(nameservers=dns_servers)
+        self.proxied_sinks = proxied_sinks
         self.session = ClientSession(connector=TCPConnector(resolver=resolver))
 
     async def forward_wunderground(self, request: web.Request) -> web.Response:
@@ -34,7 +35,7 @@ class CloudWeatherProxy:
 
     async def forward(self, sink: DataSink, request: web.Request) -> web.Response:
         """Forward data to the CloudWeather API."""
-        if sink == DataSink.WUNDERGROUND:
+        if sink == DataSink.WUNDERGROUND and DataSink.WUNDERGROUND in self.proxied_sinks:
             return await self.forward_wunderground(request)
-        if sink == DataSink.WEATHERCLOUD:
+        if sink == DataSink.WEATHERCLOUD and DataSink.WEATHERCLOUD in self.proxied_sinks:
             return await self.forward_weathercloud(request)
