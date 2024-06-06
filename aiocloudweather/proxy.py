@@ -35,7 +35,13 @@ class CloudWeatherProxy:
 
     async def forward(self, sink: DataSink, request: web.Request) -> web.Response:
         """Forward data to the CloudWeather API."""
-        if sink == DataSink.WUNDERGROUND and DataSink.WUNDERGROUND in self.proxied_sinks:
+        if (
+            sink == DataSink.WUNDERGROUND
+            and DataSink.WUNDERGROUND in self.proxied_sinks
+        ):
             return await self.forward_wunderground(request)
-        if sink == DataSink.WEATHERCLOUD and DataSink.WEATHERCLOUD in self.proxied_sinks:
+        if (
+            sink == DataSink.WEATHERCLOUD
+            and DataSink.WEATHERCLOUD in self.proxied_sinks
+        ):
             return await self.forward_weathercloud(request)

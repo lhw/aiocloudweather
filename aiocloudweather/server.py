@@ -27,17 +27,17 @@ class CloudWeatherListener:
     def __init__(
         self,
         port: int = _CLOUDWEATHER_LISTEN_PORT,
-        proxy_sinks: list[DataSink] = [],
-        dns_servers: list[str] = ["9.9.9.9"],
+        proxy_sinks: list[DataSink] | None = None,
+        dns_servers: list[str] | None = None,
     ):
         """Initialize CloudWeather Server."""
         # API Constants
         self.port: int = port
 
         # Proxy functionality
-        self.proxy_enabled: bool = len(proxy_sinks) > 0
+        self.proxy_enabled: bool = proxy_sinks and len(proxy_sinks) > 0
         if self.proxy_enabled:
-            self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers)
+            self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
 
         # webserver
         self.server: None | web.Server = None

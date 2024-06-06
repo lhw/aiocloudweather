@@ -8,6 +8,7 @@ import logging
 import sys
 
 from aiocloudweather import CloudWeatherListener, WeatherStation
+from aiocloudweather.proxy import DataSink
 from aiocloudweather.station import Sensor
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,7 +49,9 @@ def main() -> None:
         sys.exit(1)
 
     print(f"Firing up webserver to listen on port {sys.argv[1]}")
-    cloudweather_server = CloudWeatherListener(port=sys.argv[1], proxy_enabled=True)
+    cloudweather_server = CloudWeatherListener(
+        port=sys.argv[1], proxy_sinks=[DataSink.WUNDERGROUND]
+    )
 
     cloudweather_server.new_dataset_cb.append(my_handler)
     try:
