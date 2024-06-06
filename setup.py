@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 PROJECT_DIR = Path(__file__).parent.resolve()
 README_FILE = PROJECT_DIR / "README.md"
-VERSION = "2024.6.5"
+VERSION = "2024.6.6"
 
 
 setup(
@@ -21,7 +21,7 @@ setup(
     packages=find_packages(exclude=["tests.*", "tests"]),
     package_data={"aiocoudweather": ["py.typed"]},
     python_requires=">=3.12",
-    install_requires=["aiohttp>3", "requests>2", "dns-client>0.2"],
+    install_requires=["aiohttp>3", "requests>2", "aiodns>3"],
     entry_points={
         "console_scripts": ["cloudweather-testserver = aiocloudweather.__main__:main"]
     },
