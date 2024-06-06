@@ -141,11 +141,11 @@ class CloudWeatherListener:
 
         if self.proxy_enabled and sink is not None:
             try:
-                response = await self.proxy.forward(sink, request)
+                response: web.Response = await self.proxy.forward(sink, request)
                 _LOGGER.debug(
                     "CloudWeather proxy response[%d]: %s",
-                    response.status_code,
-                    response.text,
+                    response.status,
+                    await response.text(),
                 )
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.warning("CloudWeather proxy error: %s", err)
