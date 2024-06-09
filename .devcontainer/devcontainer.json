@@ -1,15 +1,17 @@
-
 {
   "name": "aiocloudweather",
   "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
   "postCreateCommand": "pip3 install -e .",
-  "runArgs": ["-e", "GIT_EDITOR=code --wait", "--privileged"],
+  "runArgs": [
+    "-e",
+    "GIT_EDITOR=code --wait",
+    "--privileged"
+  ],
   "customizations": {
     "extensions": [
       "ms-python.python",
-      "github.vscode-pull-request-github",
-      "ryanluker.vscode-coverage-gutters",
-      "ms-python.vscode-pylance"
+      "ms-python.vscode-pylance",
+      "ms-python.black-formatter"
     ],
     "settings": {
       "terminal.integrated.profiles.linux": {
@@ -30,8 +32,8 @@
       "python.formatting.provider": "black",
       "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
       "python.linting.pylintArgs": [
-          "--disable=C0114,C0115,C0116"
+        "--disable=C0114,C0115,C0116"
       ]
-}
+    }
   }
 }
