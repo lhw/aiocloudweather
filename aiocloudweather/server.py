@@ -54,6 +54,16 @@ class CloudWeatherListener:
         # storage
         self.stations: list[str] = []
 
+    def update_config(
+        self,
+        proxy_sinks: list[DataSink] | None = None,
+        dns_servers: list[str] | None = None,
+    ) -> None:
+        """Update the proxy configuration."""
+        self.proxy_enabled = proxy_sinks and len(proxy_sinks) > 0
+        if self.proxy_enabled:
+            self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
+
     async def _new_dataset_cb(self, dataset: WeatherStation) -> None:
         """Internal new sensor callback
 
