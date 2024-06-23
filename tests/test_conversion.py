@@ -13,9 +13,9 @@ from aiocloudweather.conversion import (
 
 
 def test_fahrenheit_to_celsius():
-    assert round(fahrenheit_to_celsius(32),2) == 0
-    assert round(fahrenheit_to_celsius(212),2) == 100
-    assert round(fahrenheit_to_celsius(50),2) == 10
+    assert round(fahrenheit_to_celsius(32), 2) == 0
+    assert round(fahrenheit_to_celsius(212), 2) == 100
+    assert round(fahrenheit_to_celsius(50), 2) == 10
 
 
 def test_inhg_to_hpa():
