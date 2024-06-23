@@ -90,7 +90,7 @@ class WundergroundRawSensor:
     )
     uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "UV"})
     solarradiation: float = field(
-        default=None, metadata={"unit": LIGHT_LUX, "arg": "solarRadiation"}
+        default=None, metadata={"unit": LIGHT_LUX, "keep": True, "factor": 1000,"arg": "solarRadiation"}
     )
 
 
@@ -146,7 +146,7 @@ class WeathercloudRawSensor:
     uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "uvi"})
     solarradiation: int = field(
         default=None,
-        metadata={"unit": UnitOfIrradiance.WATTS_PER_SQUARE_METER, "arg": "solarrad"},
+        metadata={"unit": UnitOfIrradiance.WATTS_PER_SQUARE_METER, "keep": True, "arg": "solarrad"},
     )
 
 
@@ -211,6 +211,7 @@ class WeatherStation:
     )
     uv: Sensor = field(default=None, metadata={"name": "UV Index"})
     solarradiation: Sensor = field(default=None, metadata={"name": "Solar Radiation"})
+    solarradiationraw: Sensor = field(default=None, metadata={"name": "Solar Radiation Raw"})
     heatindex: Sensor = field(default=None, metadata={"name": "Heat Index"})
 
     @staticmethod
@@ -236,8 +237,9 @@ class WeatherStation:
             if value is None:
                 continue
 
-            value = sensor_field.type(value)  # No idea why this is needed
+            value = sensor_field.type(value) * sensor_field.metadata.get("factor", 1)
             unit = sensor_field.metadata.get("unit")
+            keep_original = sensor_field.metadata.get("keep", False)
             conversion_func = IMPERIAL_TO_METRIC.get(unit)
 
             if conversion_func:
@@ -261,8 +263,9 @@ class WeatherStation:
                     imperial=value,
                     imperial_unit=unit,
                 )
-            else:
-                sensor_data[sensor_field.name] = Sensor(
+            if not conversion_func or keep_original:
+                field_name = sensor_field.name if not keep_original else f"{sensor_field.name}raw"
+                sensor_data[field_name] = Sensor(
                     name=sensor_field.name,
                     metric=value,
                     metric_unit=unit,
