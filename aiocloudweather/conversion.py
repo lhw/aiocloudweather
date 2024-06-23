@@ -41,8 +41,12 @@ def in_to_mm(length: float) -> float:
 
 @unit(UnitOfIrradiance.WATTS_PER_SQUARE_METER)
 def lux_to_wm2(lux: float) -> float:
-    """Convert lux to watts per square meter (W/m²)."""
-    return lux * 0.0079
+    """Convert lux to watts per square meter (W/m²).
+    For natural daylight, the luminous efficacy varies
+    but is typically in the range of 90 to 120 lm/W.
+    A commonly used average value is around 93 lm/W
+    """
+    return lux / 93
 
 
 @unit(UnitOfSpeed.METERS_PER_SECOND)
@@ -71,8 +75,12 @@ def mm_to_in(length: float) -> float:
 
 @unit(LIGHT_LUX)
 def wm2_to_lux(lux: float) -> float:
-    """Convert watts per square meter (W/m²) to lux."""
-    return lux * 127
+    """Convert watts per square meter (W/m²) to lux.
+    For natural daylight, the luminous efficacy varies
+    but is typically in the range of 90 to 120 lm/W.
+    A commonly used average value is around 93 lm/W
+    """
+    return lux * 93
 
 
 @unit(UnitOfSpeed.MILES_PER_HOUR)

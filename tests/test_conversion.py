@@ -13,9 +13,9 @@ from aiocloudweather.conversion import (
 
 
 def test_fahrenheit_to_celsius():
-    assert round(fahrenheit_to_celsius(32)) == 0
-    assert round(fahrenheit_to_celsius(212)) == 100
-    assert round(fahrenheit_to_celsius(50)) == 10
+    assert round(fahrenheit_to_celsius(32), 2) == 0
+    assert round(fahrenheit_to_celsius(212), 2) == 100
+    assert round(fahrenheit_to_celsius(50), 2) == 10
 
 
 def test_inhg_to_hpa():
@@ -31,9 +31,9 @@ def test_in_to_mm():
 
 
 def test_lux_to_wm2():
-    assert round(lux_to_wm2(100), 2) == 0.79
-    assert round(lux_to_wm2(500), 2) == 3.95
-    assert round(lux_to_wm2(1000), 2) == 7.9
+    assert round(lux_to_wm2(100), 2) == 1.08
+    assert round(lux_to_wm2(500), 2) == 5.38
+    assert round(lux_to_wm2(1000), 2) == 10.75
 
 
 def test_mph_to_ms():
@@ -61,9 +61,9 @@ def test_mm_to_in():
 
 
 def test_wm2_to_lux():
-    assert round(wm2_to_lux(1)) == 127
-    assert round(wm2_to_lux(5)) == 635
-    assert round(wm2_to_lux(10)) == 1270
+    assert round(wm2_to_lux(1)) == 93
+    assert round(wm2_to_lux(5)) == 465
+    assert round(wm2_to_lux(10)) == 930
 
 
 def test_ms_to_mph():
