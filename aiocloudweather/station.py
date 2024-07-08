@@ -1,6 +1,7 @@
 """The module parses incoming weather data from various sources into a common format."""
 
 from dataclasses import dataclass, field, fields
+from enum import Enum
 import logging
 from typing import Final
 
@@ -30,6 +31,13 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class WeatherstationVendor(Enum):
+    """The weather station cloud vendor."""
+
+    WUNDERGROUND = "wunderground"
+    WEATHERCLOUD = "weathercloud"
 
 
 @dataclass
@@ -197,6 +205,8 @@ class WeatherStation:
 
     station_id: str
     station_key: str
+    vendor: WeatherstationVendor
+
     station_sw_version: str = field(default=None)
     station_client_ip: str = field(default=None)
     update_time: float = field(default=None)
@@ -289,7 +299,10 @@ class WeatherStation:
                     imperial_unit=unit,
                 )
         return WeatherStation(
-            station_id=data.station_id, station_key=data.station_key, **sensor_data
+            station_id=data.station_id,
+            station_key=data.station_key,
+            vendor=WeatherstationVendor.WUNDERGROUND,
+            **sensor_data,
         )
 
     @staticmethod
@@ -353,5 +366,6 @@ class WeatherStation:
         return WeatherStation(
             station_id=str(data.station_id),
             station_key=str(data.station_key),
+            vendor=WeatherstationVendor.WEATHERCLOUD,
             **sensor_data,
         )
