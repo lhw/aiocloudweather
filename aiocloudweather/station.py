@@ -34,9 +34,11 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class WeatherstationVendor(Enum):
-    """"""
+    """The weather station cloud vendor."""
+
     WUNDERGROUND = "wunderground"
     WEATHERCLOUD = "weathercloud"
+
 
 @dataclass
 class WundergroundRawSensor:
@@ -297,7 +299,10 @@ class WeatherStation:
                     imperial_unit=unit,
                 )
         return WeatherStation(
-            station_id=data.station_id, station_key=data.station_key, vendor=WeatherstationVendor.WUNDERGROUND, **sensor_data
+            station_id=data.station_id,
+            station_key=data.station_key,
+            vendor=WeatherstationVendor.WUNDERGROUND,
+            **sensor_data,
         )
 
     @staticmethod
