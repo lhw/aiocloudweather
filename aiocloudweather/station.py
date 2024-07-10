@@ -36,8 +36,8 @@ _LOGGER = logging.getLogger(__name__)
 class WeatherstationVendor(Enum):
     """The weather station cloud vendor."""
 
-    WUNDERGROUND = "wunderground"
-    WEATHERCLOUD = "weathercloud"
+    WUNDERGROUND = "Weather Underground"
+    WEATHERCLOUD = "Weathercloud.net"
 
 
 @dataclass
