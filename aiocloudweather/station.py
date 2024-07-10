@@ -36,8 +36,8 @@ _LOGGER = logging.getLogger(__name__)
 class WeatherstationVendor(Enum):
     """The weather station cloud vendor."""
 
-    WUNDERGROUND = "wunderground"
-    WEATHERCLOUD = "weathercloud"
+    WUNDERGROUND = "Weather Underground"
+    WEATHERCLOUD = "Weathercloud.net"
 
 
 @dataclass
@@ -292,7 +292,7 @@ class WeatherStation:
                     else f"{sensor_field.name}raw"
                 )
                 sensor_data[field_name] = Sensor(
-                    name=sensor_field.name,
+                    name=field_name,
                     metric=value,
                     metric_unit=unit,
                     imperial=value,
@@ -333,9 +333,9 @@ class WeatherStation:
             conversion_func = METRIC_TO_IMPERIAL.get(unit)
 
             if conversion_func:
-                value = float(value) / 10  # All values are shifted by 10
+                value: float = float(value) / 10  # All values are shifted by 10
                 try:
-                    converted_value = conversion_func(float(value))
+                    converted_value = conversion_func(value)
                 except TypeError as e:
                     _LOGGER.error(
                         "Failed to convert %s from %s to %s: %s -> %s",
