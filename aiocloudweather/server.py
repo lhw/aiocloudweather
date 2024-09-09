@@ -62,6 +62,7 @@ class CloudWeatherListener:
         """Update the proxy configuration."""
         self.proxy_enabled = proxy_sinks and len(proxy_sinks) > 0
         if self.proxy_enabled:
+            self.proxy.close()
             self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
 
     async def _new_dataset_cb(self, dataset: WeatherStation) -> None:
