@@ -21,15 +21,10 @@ class CloudWeatherProxy:
         self.proxied_sinks = proxied_sinks
         self.session = ClientSession(connector=TCPConnector(resolver=resolver))
 
-    def __del__(self):
-        """Close the session when the object is deleted."""
-        if not self.session.closed:
-            self.session.close()
-
-    def close(self):
+    async def close(self):
         """Close the session."""
         if not self.session.closed:
-            self.session.close()
+            await self.session.close()
 
     async def forward_wunderground(self, request: web.Request) -> web.Response:
         """Forward Wunderground data to their API."""
