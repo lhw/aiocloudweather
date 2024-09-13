@@ -1,9 +1,12 @@
 """Proxy for forwarding data to the CloudWeather APIs."""
 
 from enum import Enum
+import logging
 from aiohttp import web, TCPConnector, ClientSession
 from urllib.parse import quote
 from aiohttp.resolver import AsyncResolver
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DataSink(Enum):
@@ -30,12 +33,14 @@ class CloudWeatherProxy:
         """Forward Wunderground data to their API."""
         query_string = quote(request.query_string).replace("%20", "+")
         url = f"https://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?{query_string}"
+        _LOGGER.debug(f"Forwarding Wunderground data: {url}")
         return await self.session.get(url)
 
     async def forward_weathercloud(self, request: web.Request) -> web.Response:
         """Forward WeatherCloud data to their API."""
         new_path = request.path[request.path.index("/v01/set") :]
         url = f"https://api.weathercloud.net{new_path}"
+        _LOGGER.debug(f"Forwarding WeatherCloud data: {url}")
         return await self.session.get(url)
 
     async def forward(self, sink: DataSink, request: web.Request) -> web.Response:
