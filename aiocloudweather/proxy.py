@@ -1,6 +1,7 @@
 """Proxy for forwarding data to the CloudWeather APIs."""
 
 from enum import Enum
+import asyncio
 import logging
 from aiohttp import web, TCPConnector, ClientSession
 from urllib.parse import quote
@@ -21,13 +22,21 @@ class CloudWeatherProxy:
 
     def __init__(self, proxied_sinks: list[DataSink], dns_servers: list[str]):
         resolver = AsyncResolver(nameservers=dns_servers)
+        self.dns_servers = dns_servers
         self.proxied_sinks = proxied_sinks
         self.session = ClientSession(connector=TCPConnector(resolver=resolver))
 
-    async def close(self):
-        """Close the session."""
+        _LOGGER.debug(
+            "CloudWeatherProxy initialized with sinks %s and DNS servers %s",
+            proxied_sinks,
+            dns_servers,
+        )
+
+    def __del__(self):
+        """Close the session. The TCPConnector handles deletion poorly."""
         if not self.session.closed:
-            await self.session.close()
+            loop = asyncio.get_running_loop()
+            asyncio.run_coroutine_threadsafe(self.session.close(), loop).result()
 
     async def forward_wunderground(self, request: web.Request) -> web.Response:
         """Forward Wunderground data to their API."""
