@@ -1,4 +1,3 @@
-import asyncio
 import pytest
 from aiohttp import web
 from aiocloudweather.server import CloudWeatherListener
