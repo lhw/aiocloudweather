@@ -229,6 +229,7 @@ class WeatherStation:
     windgustdirection: Sensor = field(
         default=None, metadata={"name": "Wind Gust Direction"}
     )
+    windchill: Sensor = field(default=None, metadata={"name": "Wind Chill"})
     uv: Sensor = field(default=None, metadata={"name": "UV Index"})
     solarradiation: Sensor = field(default=None, metadata={"name": "Solar Radiation"})
     solarradiationraw: Sensor = field(
