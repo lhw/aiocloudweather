@@ -41,8 +41,8 @@ def test_weather_station_from_weathercloud():
         temperature=160,
         humidity=80,
         dewpoint=129,
-        rain=0,
-        dailyrain=0,
+        rain=109,
+        dailyrain=25,
         winddirection=288,
         windspeed=0,
         windgustspeed=0,
@@ -59,3 +59,7 @@ def test_weather_station_from_weathercloud():
     assert weather_station.temperature.unit == "°C"
     assert weather_station.humidity.value == 80
     assert weather_station.humidity.unit == "%"
+    assert weather_station.rain.value == 10.9
+    assert weather_station.rain.unit == "mm/h"
+    assert weather_station.dailyrain.value == 2.5
+    assert weather_station.dailyrain.unit == "mm"
