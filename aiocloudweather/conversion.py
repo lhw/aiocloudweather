@@ -1,7 +1,6 @@
 """ A list of all the unit conversions. Many are just approximations."""
 
 from .const import (
-    LIGHT_LUX,
     UnitOfIrradiance,
     UnitOfPrecipitationDepth,
     UnitOfPressure,

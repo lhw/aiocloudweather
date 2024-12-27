@@ -6,16 +6,11 @@ import logging
 from typing import Final
 
 from aiocloudweather.conversion import (
-    celsius_to_fahrenheit,
     fahrenheit_to_celsius,
-    hpa_to_inhg,
     in_to_mm,
     inhg_to_hpa,
     lux_to_wm2,
-    mm_to_in,
     mph_to_ms,
-    ms_to_mph,
-    wm2_to_lux,
 )
 from .const import (
     DEGREE,
@@ -201,6 +196,7 @@ IMPERIAL_TO_METRIC: Final = {
     UnitOfSpeed.MILES_PER_HOUR: mph_to_ms,
 }
 
+
 @dataclass
 class Sensor:
     """Represents a weather sensor."""
@@ -209,6 +205,7 @@ class Sensor:
 
     value: float
     unit: str
+
 
 @dataclass
 class WeatherStation:
@@ -351,6 +348,8 @@ class WeatherStation:
 
             value = sensor_field.type(value)  # No idea why this is needed
             unit = sensor_field.metadata.get("unit")
+            if unit != PERCENTAGE:
+                value: float = float(value) / 10  # All values are shifted by 10
 
             sensor_data[sensor_field.name] = Sensor(
                 name=sensor_field.name,
