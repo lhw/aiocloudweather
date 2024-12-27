@@ -25,18 +25,12 @@ def test_weather_station_from_wunderground():
 
     assert weather_station.station_id == "12345"
     assert weather_station.station_key == "12345"
-    assert round(weather_station.barometer.metric, 2) == 1013.21
-    assert weather_station.barometer.metric_unit == "hPa"
-    assert weather_station.barometer.imperial == 29.92
-    assert weather_station.barometer.imperial_unit == "inHg"
-    assert weather_station.temperature.metric == 22.5
-    assert weather_station.temperature.metric_unit == "°C"
-    assert weather_station.temperature.imperial == 72.5
-    assert weather_station.temperature.imperial_unit == "°F"
-    assert weather_station.humidity.metric == 44
-    assert weather_station.humidity.metric_unit == "%"
-    assert weather_station.humidity.imperial == 44
-    assert weather_station.humidity.imperial_unit == "%"
+    assert round(weather_station.barometer.value, 2) == 1013.21
+    assert weather_station.barometer.unit == "hPa"
+    assert weather_station.temperature.value == 22.5
+    assert weather_station.temperature.unit == "°C"
+    assert weather_station.humidity.value == 44
+    assert weather_station.humidity.unit == "%"
 
 
 def test_weather_station_from_weathercloud():
@@ -47,8 +41,8 @@ def test_weather_station_from_weathercloud():
         temperature=160,
         humidity=80,
         dewpoint=129,
-        rain=0,
-        dailyrain=0,
+        rain=109,
+        dailyrain=25,
         winddirection=288,
         windspeed=0,
         windgustspeed=0,
@@ -59,15 +53,13 @@ def test_weather_station_from_weathercloud():
 
     assert weather_station.station_id == "12345"
     assert weather_station.station_key == "12345"
-    assert weather_station.barometer.metric == 1013
-    assert weather_station.barometer.metric_unit == "hPa"
-    assert round(weather_station.barometer.imperial, 2) == 29.91
-    assert weather_station.barometer.imperial_unit == "inHg"
-    assert weather_station.temperature.metric == 16
-    assert weather_station.temperature.metric_unit == "°C"
-    assert weather_station.temperature.imperial == 60.8
-    assert weather_station.temperature.imperial_unit == "°F"
-    assert weather_station.humidity.metric == 80
-    assert weather_station.humidity.metric_unit == "%"
-    assert weather_station.humidity.imperial == 80
-    assert weather_station.humidity.imperial_unit == "%"
+    assert weather_station.barometer.value == 1013
+    assert weather_station.barometer.unit == "hPa"
+    assert weather_station.temperature.value == 16
+    assert weather_station.temperature.unit == "°C"
+    assert weather_station.humidity.value == 80
+    assert weather_station.humidity.unit == "%"
+    assert weather_station.rain.value == 10.9
+    assert weather_station.rain.unit == "mm/h"
+    assert weather_station.dailyrain.value == 2.5
+    assert weather_station.dailyrain.unit == "mm"
