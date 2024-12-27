@@ -53,37 +53,3 @@ def lux_to_wm2(lux: float) -> float:
 def mph_to_ms(speed: float) -> float:
     """Convert miles per hour (mph) to meters per second (m/s)."""
     return speed * 0.44704
-
-
-@unit(UnitOfPressure.INHG)
-def hpa_to_inhg(pressure: float) -> float:
-    """Convert hectopascals (hPa) to inches of mercury (inHg)."""
-    return pressure * 0.02953
-
-
-@unit(UnitOfTemperature.FAHRENHEIT)
-def celsius_to_fahrenheit(temp_c: float) -> float:
-    """Convert Celsius to Fahrenheit."""
-    return temp_c * 9.0 / 5.0 + 32
-
-
-@unit(UnitOfPrecipitationDepth.INCHES)
-def mm_to_in(length: float) -> float:
-    """Convert millimeters (mm) to inches."""
-    return length * 0.0393701
-
-
-@unit(LIGHT_LUX)
-def wm2_to_lux(lux: float) -> float:
-    """Convert watts per square meter (W/m²) to lux.
-    For natural daylight, the luminous efficacy varies
-    but is typically in the range of 90 to 120 lm/W.
-    A commonly used average value is around 93 lm/W
-    """
-    return lux * 93
-
-
-@unit(UnitOfSpeed.MILES_PER_HOUR)
-def ms_to_mph(speed: float) -> float:
-    """Convert meters per second (m/s) to miles per hour (mph)."""
-    return speed * 2.23694
