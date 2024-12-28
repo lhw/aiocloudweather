@@ -35,6 +35,9 @@ class CloudWeatherListener:
         self.port: int = port
 
         # Proxy functionality
+        self.proxy: None | CloudWeatherProxy = None
+        self.dns_servers: list[str] = dns_servers or ["9.9.9.9"]
+        self.proxy_sinks: list[DataSink] | None = proxy_sinks
         self.proxy_enabled: bool = proxy_sinks and len(proxy_sinks) > 0
         if self.proxy_enabled:
             self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
@@ -65,6 +68,15 @@ class CloudWeatherListener:
             if self.proxy:
                 await self.proxy.close()
             self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
+
+
+    def get_active_proxies(self) -> list[DataSink]:
+        """Get the active proxies."""
+        return self.proxy_sinks
+
+    def get_dns_servers(self) -> list[str]:
+        """Get the DNS servers."""
+        return self.dns_servers
 
     async def _new_dataset_cb(self, dataset: WeatherStation) -> None:
         """Internal new sensor callback
