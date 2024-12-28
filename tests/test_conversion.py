@@ -2,7 +2,6 @@ from aiocloudweather.conversion import (
     fahrenheit_to_celsius,
     in_to_mm,
     inhg_to_hpa,
-    lux_to_wm2,
     mph_to_ms,
 )
 
@@ -23,12 +22,6 @@ def test_in_to_mm():
     assert round(in_to_mm(1), 2) == 25.4
     assert round(in_to_mm(2.5), 2) == 63.5
     assert round(in_to_mm(0.5), 2) == 12.7
-
-
-def test_lux_to_wm2():
-    assert round(lux_to_wm2(100), 2) == 1.08
-    assert round(lux_to_wm2(500), 2) == 5.38
-    assert round(lux_to_wm2(1000), 2) == 10.75
 
 
 def test_mph_to_ms():

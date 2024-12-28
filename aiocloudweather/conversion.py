@@ -1,7 +1,6 @@
 """ A list of all the unit conversions. Many are just approximations."""
 
 from .const import (
-    UnitOfIrradiance,
     UnitOfPrecipitationDepth,
     UnitOfPressure,
     UnitOfSpeed,
@@ -36,16 +35,6 @@ def inhg_to_hpa(pressure: float) -> float:
 def in_to_mm(length: float) -> float:
     """Convert inches to millimeters (mm)."""
     return length * 25.4
-
-
-@unit(UnitOfIrradiance.WATTS_PER_SQUARE_METER)
-def lux_to_wm2(lux: float) -> float:
-    """Convert lux to watts per square meter (W/m²).
-    For natural daylight, the luminous efficacy varies
-    but is typically in the range of 90 to 120 lm/W.
-    A commonly used average value is around 93 lm/W
-    """
-    return lux / 93
 
 
 @unit(UnitOfSpeed.METERS_PER_SECOND)

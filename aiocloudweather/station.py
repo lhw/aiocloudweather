@@ -9,7 +9,6 @@ from aiocloudweather.conversion import (
     fahrenheit_to_celsius,
     in_to_mm,
     inhg_to_hpa,
-    lux_to_wm2,
     mph_to_ms,
 )
 from .const import (
@@ -96,7 +95,6 @@ class WundergroundRawSensor:
         default=None,
         metadata={
             "unit": LIGHT_LUX,
-            "keep": True,
             "factor": 1000,
             "arg": "solarRadiation",
         },
@@ -192,7 +190,6 @@ IMPERIAL_TO_METRIC: Final = {
     UnitOfPressure.INHG: inhg_to_hpa,
     UnitOfTemperature.FAHRENHEIT: fahrenheit_to_celsius,
     UnitOfPrecipitationDepth.INCHES: in_to_mm,
-    LIGHT_LUX: lux_to_wm2,
     UnitOfSpeed.MILES_PER_HOUR: mph_to_ms,
 }
 
