@@ -69,7 +69,6 @@ class CloudWeatherListener:
                 await self.proxy.close()
             self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
 
-
     def get_active_proxies(self) -> list[DataSink]:
         """Get the active proxies."""
         return self.proxy_sinks
