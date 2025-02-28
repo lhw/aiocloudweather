@@ -31,6 +31,8 @@ def test_weather_station_from_wunderground():
     assert weather_station.temperature.unit == "°C"
     assert weather_station.humidity.value == 44
     assert weather_station.humidity.unit == "%"
+    assert weather_station.solarradiation.value == 289200.0
+    assert weather_station.solarradiation.unit == "lx"
 
 
 def test_weather_station_from_wunderground_2():
