@@ -90,13 +90,21 @@ class WundergroundRawSensor:
     windgustdirection: float = field(
         default=None, metadata={"unit": DEGREE, "arg": "windgustdir"}
     )
-    uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "UV"}
-    )
+    uv: int = field(default=None, metadata={"unit": UV_INDEX, "arg": "UV"})
     solarradiation: float = field(
+        default=None,
+        metadata={
+            "unit": LIGHT_LUX,
+            "factor": 1000,
+            "arg": "solarRadiation",
+        },
+    )
+    solarradiation_new: float = field(
         default=None,
         metadata={
             "unit": UnitOfIrradiance.WATTS_PER_SQUARE_METER,
             "arg": "solarradiation",
+            "alternative_for": "solarradiation",
         },
     )
 
@@ -253,9 +261,6 @@ class WeatherStation:
     windchill: Sensor = field(default=None, metadata={"name": "Wind Chill"})
     uv: Sensor = field(default=None, metadata={"name": "UV Index"})
     solarradiation: Sensor = field(default=None, metadata={"name": "Solar Radiation"})
-    solarradiationraw: Sensor = field(
-        default=None, metadata={"name": "Solar Radiation Raw"}
-    )
     heatindex: Sensor = field(default=None, metadata={"name": "Heat Index"})
     heatindexindoor: Sensor = field(
         default=None, metadata={"name": "Indoor Heat Index"}
@@ -287,7 +292,9 @@ class WeatherStation:
             value = sensor_field.type(value) * sensor_field.metadata.get("factor", 1)
             unit = sensor_field.metadata.get("unit")
             conversion_func = IMPERIAL_TO_METRIC.get(unit)
-
+            sensor_name = sensor_field.metadata.get(
+                "alternative_for", sensor_field.name
+            )
             if conversion_func:
                 try:
                     converted_value = conversion_func(value)
@@ -302,14 +309,14 @@ class WeatherStation:
                         e,
                     )
                     continue
-                sensor_data[sensor_field.name] = Sensor(
-                    name=sensor_field.name,
+                sensor_data[sensor_name] = Sensor(
+                    name=sensor_name,
                     value=converted_value,
                     unit=conversion_func.unit,
                 )
             else:
-                sensor_data[sensor_field.name] = Sensor(
-                    name=sensor_field.name,
+                sensor_data[sensor_name] = Sensor(
+                    name=sensor_name,
                     value=value,
                     unit=unit,
                 )
