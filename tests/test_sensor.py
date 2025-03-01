@@ -31,6 +31,32 @@ def test_weather_station_from_wunderground():
     assert weather_station.temperature.unit == "°C"
     assert weather_station.humidity.value == 44
     assert weather_station.humidity.unit == "%"
+    assert weather_station.solarradiation.value == 289200.0
+    assert weather_station.solarradiation.unit == "lx"
+
+
+def test_weather_station_from_wunderground_2():
+    raw_sensor_data = WundergroundRawSensor(
+        station_id="12345",
+        station_key="12345",
+        barometer=29.92,
+        temperature=72.5,
+        humidity=44,
+        dewpoint=49.2,
+        rain=0,
+        dailyrain=0,
+        winddirection=249,
+        windspeed=2.0,
+        windgustspeed=2.7,
+        uv=2,
+        solarradiation_new=9.57,
+    )
+    weather_station = WeatherStation.from_wunderground(raw_sensor_data)
+
+    assert weather_station.station_id == "12345"
+    assert weather_station.station_key == "12345"
+    assert weather_station.solarradiation.value == 9.57
+    assert weather_station.solarradiation.unit == "W/m²"
 
 
 def test_weather_station_from_weathercloud():
