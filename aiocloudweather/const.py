@@ -1,4 +1,4 @@
-""" Copy of the relevant data from homeassistant/const.py without importing all of homeassistant."""
+"""Copy of the relevant data from homeassistant/const.py without importing all of homeassistant."""
 
 from enum import StrEnum
 from typing import Final
