@@ -352,7 +352,7 @@ class WeatherStation:
 
             value = sensor_field.type(value)  # No idea why this is needed
             unit = sensor_field.metadata.get("unit")
-            if unit != PERCENTAGE:
+            if unit not in [PERCENTAGE, DEGREE]:
                 value: float = float(value) / 10  # All values are shifted by 10
 
             sensor_data[sensor_field.name] = Sensor(

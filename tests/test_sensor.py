@@ -33,6 +33,7 @@ def test_weather_station_from_wunderground():
     assert weather_station.humidity.unit == "%"
     assert weather_station.solarradiation.value == 289200.0
     assert weather_station.solarradiation.unit == "lx"
+    assert weather_station.winddirection.value == 249
 
 
 def test_weather_station_from_wunderground_2():
@@ -89,3 +90,4 @@ def test_weather_station_from_weathercloud():
     assert weather_station.rain.unit == "mm/h"
     assert weather_station.dailyrain.value == 2.5
     assert weather_station.dailyrain.unit == "mm"
+    assert weather_station.winddirection.value == 288
