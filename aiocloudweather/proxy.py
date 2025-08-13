@@ -31,7 +31,10 @@ class CloudWeatherProxy:
 
     async def forward_wunderground(self, request: web.Request) -> web.Response:
         """Forward Wunderground data to their API."""
-        query_string = quote(request.query_string).replace("%20", "+")
+        if '%' in request.query_string:
+            query_string = request.query_string
+        else:
+            query_string = quote(request.query_string).replace("%20", "+")
         url = f"https://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?{query_string}"
         _LOGGER.debug("Forwarding Wunderground data: %s", url)
         return await self.session.get(url)
