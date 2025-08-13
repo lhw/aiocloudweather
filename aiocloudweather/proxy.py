@@ -31,7 +31,7 @@ class CloudWeatherProxy:
 
     async def forward_wunderground(self, request: web.Request) -> web.Response:
         """Forward Wunderground data to their API."""
-        if '%' in request.query_string:
+        if "%" in request.query_string:
             query_string = request.query_string
         else:
             query_string = quote(request.query_string).replace("%20", "+")
