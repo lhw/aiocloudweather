@@ -37,10 +37,10 @@ class CloudWeatherListener:
         # Proxy functionality
         self.proxy: None | CloudWeatherProxy = None
         self.dns_servers: list[str] = dns_servers or ["9.9.9.9"]
-        self.proxy_sinks: list[DataSink] | None = proxy_sinks
-        self.proxy_enabled: bool = proxy_sinks and len(proxy_sinks) > 0
+        self.proxy_sinks: list[DataSink] = proxy_sinks or []
+        self.proxy_enabled: bool = bool(self.proxy_sinks)
         if self.proxy_enabled:
-            self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
+            self.proxy = CloudWeatherProxy(self.proxy_sinks, self.dns_servers)
 
         # webserver
         self.server: None | web.Server = None
@@ -63,15 +63,20 @@ class CloudWeatherListener:
         dns_servers: list[str] | None = None,
     ) -> None:
         """Update the proxy configuration."""
-        self.proxy_enabled = proxy_sinks and len(proxy_sinks) > 0
+        self.proxy_sinks = proxy_sinks or []
+        self.dns_servers = dns_servers or self.dns_servers or ["9.9.9.9"]
+        self.proxy_enabled = bool(self.proxy_sinks)
+
+        if self.proxy:
+            await self.proxy.close()
+            self.proxy = None
+
         if self.proxy_enabled:
-            if self.proxy:
-                await self.proxy.close()
-            self.proxy = CloudWeatherProxy(proxy_sinks, dns_servers or ["9.9.9.9"])
+            self.proxy = CloudWeatherProxy(self.proxy_sinks, self.dns_servers)
 
     def get_active_proxies(self) -> list[DataSink]:
         """Get the active proxies."""
-        return self.proxy_sinks
+        return self.proxy_sinks or []
 
     def get_dns_servers(self) -> list[str]:
         """Get the DNS servers."""
