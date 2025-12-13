@@ -20,8 +20,8 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=["tests.*", "tests"]),
     package_data={"aiocoudweather": ["py.typed"]},
-    python_requires=">=3.12",
-    install_requires=["aiohttp>3", "aiodns>3"],
+    python_requires=">=3.13",
+    install_requires=["aiohttp>3.13", "aiodns>3.6"],
     license_files=["LICENSE"],
     entry_points={
         "console_scripts": ["cloudweather-testserver = aiocloudweather.__main__:main"]
@@ -32,7 +32,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Home Automation",
     ],
 )
