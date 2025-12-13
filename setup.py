@@ -21,7 +21,7 @@ setup(
     packages=find_packages(exclude=["tests.*", "tests"]),
     package_data={"aiocoudweather": ["py.typed"]},
     python_requires=">=3.13",
-    install_requires=["aiohttp>3.13", "aiodns>3.6"],
+    install_requires=["aiohttp>3.13", "aiodns==3.5.0"],
     license_files=["LICENSE"],
     entry_points={
         "console_scripts": ["cloudweather-testserver = aiocloudweather.__main__:main"]
